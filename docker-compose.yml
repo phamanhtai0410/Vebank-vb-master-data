@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  vb-sync-master-data-scheduled-job:
+    image: vb-sync-master-data-scheduled-job
+    build: .
+    restart: always
+    volumes:
+      - ./:/webapps
+    command: supervisord -n -c /etc/supervisor.d/scheduled_job.conf
+
+  vb-sync-master-data-worker:
+    image: vb-sync-master-data-worker
+    build: .
+    restart: always
+    volumes:
+      - ./:/webapps
+    command: supervisord -n -c /etc/supervisor.d/worker.conf
