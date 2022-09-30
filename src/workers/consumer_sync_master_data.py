@@ -60,6 +60,9 @@ def staking_handler():
     # Save to DB
     _staking_VB.save_apr(_apr_VB)
     _staking_LP_VB_VET.save_apr(_apr_LP)
+
+    _staking_VB.save_total_staked()
+    _staking_LP_VB_VET.save_total_staked()
     pass
 
 
