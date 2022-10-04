@@ -19,19 +19,17 @@ def main(_cfg):
     mq = amqp.AmqpConnection(**cfg_rabbit)
     mq.connect()
 
-    while True:
-        mq.publish(
-            payload={
-                "action": "sync_lending"
-            }
-        )
-        mq.publish(
-            payload={
-                "action": "sync_staking"
-            }
-        )
-        print("Push to consumer to sync data")
-        time.sleep(DefaultConfig.SCHEDULED_INTERVAL)
+    mq.publish(
+        payload={
+            "action": "sync_lending"
+        }
+    )
+    mq.publish(
+        payload={
+            "action": "sync_staking"
+        }
+    )
+    print("Push to consumer to sync data")
 
 
 if __name__ == "__main__":
@@ -61,4 +59,8 @@ if __name__ == "__main__":
     _cfg["exchange"] = _exchange
     _cfg["routing_key"] = _routing_key
     _cfg["queue"] = _queue
-    main(_cfg)
+
+    while True:
+        main(_cfg)
+        time.sleep(DefaultConfig.SCHEDULED_INTERVAL)
+
