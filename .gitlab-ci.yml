@@ -8,6 +8,8 @@ variables:
   FULLREPO_ASIA_STAG: $CONTAINER_REPO_ASIA_sSTAG:$CI_COMMIT_SHORT_SHA
   HELM_VALUE: ${CI_COMMIT_REF_NAME}
   HELM_VERSION: 3.0.0
+  KUBECTL_VERSION: v1.22.0
+  SKAFFOLD_VERSION: v1.38.0
   AWS_REGION: ap-southeast-1
   GITLAB_TOKEN: $GITLAB_RUNNER_TOKEN
   DOCKER_DRIVER: overlay
@@ -48,7 +50,7 @@ build_stag:
     - pip install awscli 
     - git submodule add -f --branch stag https://read-token:$GITLAB_TOKEN@gitlab.rinznetwork.com/vebank/vb-lib.git lib
     - export VERIFY_CHECKSUM=false && curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && chmod +x ./get_helm.sh && ./get_helm.sh
-    - curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/v1.38.0/skaffold-linux-amd64 && chmod +x skaffold &&  mv skaffold /usr/local/bin
+    - curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/$SKAFFOLD_VERSION/skaffold-linux-amd64 && chmod +x skaffold &&  mv skaffold /usr/local/bin
     - git submodule sync --recursive
     - git submodule update --init --remote --recursive
   script:
@@ -87,8 +89,8 @@ deploy_worker_stag:
       fi
     - git clone https://read-token:$GITLAB_TOKEN@gitlab.rinznetwork.com/rinz-io-devops/helm-value/$IMAGE_NAME.git
     - mv $IMAGE_NAME/${APP_NAME_WORKER}-stag.yaml .
-    - curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.0/bin/linux/amd64/kubectl && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
-    - curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/v1.38.0/skaffold-linux-amd64 && chmod +x skaffold &&  mv skaffold /usr/local/bin
+    - curl -LO https://storage.googleapis.com/kubernetes-release/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
+    - curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/$SKAFFOLD_VERSION/skaffold-linux-amd64 && chmod +x skaffold &&  mv skaffold /usr/local/bin
     - /usr/local/bin/skaffold deploy -p profile-${APP_NAME_WORKER}-stag   -a build_sync.json
 
   only:
@@ -112,8 +114,8 @@ deploy_schedule_stag:
       fi
     - git clone https://read-token:$GITLAB_TOKEN@gitlab.rinznetwork.com/rinz-io-devops/helm-value/$IMAGE_NAME.git
     - mv $IMAGE_NAME/${APP_NAME_SCHEDULE}-stag.yaml .
-    - curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.0/bin/linux/amd64/kubectl && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
-    - curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/v1.38.0/skaffold-linux-amd64 && chmod +x skaffold &&  mv skaffold /usr/local/bin
+    - curl -LO https://storage.googleapis.com/kubernetes-release/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl
+    - curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/$SKAFFOLD_VERSION/skaffold-linux-amd64 && chmod +x skaffold &&  mv skaffold /usr/local/bin
     - /usr/local/bin/skaffold deploy -p profile-${APP_NAME_SCHEDULE}-stag   -a build_sync.json
 
   only:
